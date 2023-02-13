@@ -37,6 +37,8 @@ SpringAnimation::SpringAnimation(SpringForce &&spring_force)
       max_value(UNSET) {}
 
 bool SpringAnimation::update_value_and_velocity(long delta_t) {
+    running_ = true;
+
     if (end_requested_) {
         if (skip_requested_) {
             spring_.final_position = value_;
@@ -87,15 +89,20 @@ bool SpringAnimation::update_value_and_velocity(long delta_t) {
     if (spring_.is_at_equilibrium(value_, velocity_)) {
         value_ = static_cast<float>(spring_.final_position);
         velocity_ = 0;
+        running_ = false;
         return true;
     }
     return false;
 }
 
 void SpringAnimation::update_final_position(float final_position) {
-    if (pending_position_ != UNSET) {
+    if (running_) {
         pending_position_ = final_position;
     } else {
-        spring_.final_position = final_position;
+        if (pending_position_ != UNSET) {
+            pending_position_ = final_position;
+        } else {
+            spring_.final_position = final_position;
+        }
     }
 }

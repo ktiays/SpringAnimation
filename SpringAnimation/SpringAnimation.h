@@ -27,6 +27,9 @@ private:
     float velocity_ = 0;
     float value_;
 
+    /// A Boolean value indicates whether animation is running.
+    bool running_ = false;
+
 public:
     float min_value;
     float max_value;
@@ -80,7 +83,7 @@ public:
     /// <p>
     /// The animation will stop at the current state.
     /// </p>
-    inline void reset() {
+    inline void interrupt() {
         end_requested_ = true;
         skip_requested_ = false;
     }
